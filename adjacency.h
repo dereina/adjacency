@@ -168,6 +168,11 @@ namespace adj{
     class Adjacency
     {
     public:        
+        static Adjacency &singleton(){
+            static Adjacency adjacency;
+            return adjacency;
+            
+        }
         typedef typename std::map<std::pair<const type_info*, std::string>, NodeI*>::iterator Iterator;
 
         std::map< std::pair<const type_info*, std::string>, NodeI* > adjacency;
@@ -463,7 +468,9 @@ namespace adj{
             }
         };
 
-        Adjacency();
+        Adjacency(){
+
+        }
 
         template<class T>
         Node<T> *createNode(std::string namein){
