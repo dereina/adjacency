@@ -13,6 +13,10 @@ namespace adj{
         friend class Adjacency;
         std::string name;
     protected:
+        NodeI(){
+
+        }
+        virtual ~NodeI(){}
         void setName(std::string &in) {
             name = in;
 
@@ -34,9 +38,17 @@ namespace adj{
         friend class Adjacency;
     protected:
         T data;
+        Node(){
+
+        }
+        virtual ~Node(){}
     public:
         T &getData(){
             return data;
+
+        }
+        void setData(T &datain){
+            data = datain;
 
         }
         T &operator*(){
@@ -52,6 +64,18 @@ namespace adj{
 
         }
     };
+    template<class T>
+    class NodePtr : public Node<T*> {
+        friend class Adjacency;
+    protected:
+        NodePtr(){
+
+        }
+        virtual ~NodePtr(){
+            delete data;
+        }
+    };
+
     template<class T>
     Node<T> *cast(NodeI *nodei){
         if(nodei->typeInfo() == &typeid (T))
@@ -171,7 +195,6 @@ namespace adj{
         static Adjacency &singleton(){
             static Adjacency adjacency;
             return adjacency;
-            
         }
         typedef typename std::map<std::pair<const type_info*, std::string>, NodeI*>::iterator Iterator;
 
@@ -478,6 +501,20 @@ namespace adj{
             std::pair<const type_info*, std::string> p(t, namein);
             if(adjacency.find(p) == adjacency.end()){
                 Node<T> * in = new Node<T>();
+                in->setName(namein);
+                adjacency[p] = in;
+                return in;
+
+            }
+            return NULL;
+
+        }
+        template<class T>
+        NodePtr<T> *createNodePtr(std::string namein){
+            const type_info *t = &typeid(T*);
+            std::pair<const type_info*, std::string> p(t, namein);
+            if(adjacency.find(p) == adjacency.end()){
+                NodePtr<T> * in = new NodePtr<T>();
                 in->setName(namein);
                 adjacency[p] = in;
                 return in;
